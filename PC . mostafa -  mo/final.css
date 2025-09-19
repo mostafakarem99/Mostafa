@@ -1,75 +1,151 @@
-/*BEGIN Xbox One Controller Styling*/
-.controller.xbox {
-    background: url(basemod.png);
-    height: 630px;
-    width: 750px;
-    /*    margin-left: -375px;
-        margin-top: -285px;*/
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xbox One Controller Overlay</title>
+  <style>
+    /*BEGIN Xbox One Controller Styling*/
+    .controller.xbox {
+        background: url(basemod.png);
+        height: 630px;
+        width: 750px;
+        position: relative;
+        margin: 20px auto;
+    }
 
-.xbox .button {
-    position: absolute;
-    background: url(abxymod.png);
-    width: 48px;
-    height: 48px;
-}
+    .xbox .button {
+        position: absolute;
+        background: url(abxymod.png);
+        width: 48px;
+        height: 48px;
+    }
 
-.xbox .button.pressed {
-    background-position-y: -48px;
-    margin-top: 5px;
-    opacity: 1;
-}
+    .xbox .button.pressed {
+        background-position-y: -48px;
+        margin-top: 5px;
+        opacity: 1;
+    }
 
-.xbox .a {
-    background-position: 0 0;
-    top: 108px;
-    left: 55px;
-}
+    .xbox .a {
+        background-position: 0 0;
+        top: 108px;
+        left: 55px;
+    }
 
-.xbox .b {
-    background-position: -49px 0;
-    top: 58px;
-    right: 0px;
-}
+    .xbox .b {
+        background-position: -49px 0;
+        top: 58px;
+        right: 0px;
+    }
 
-.xbox .x {
-    background-position: -98px 0;
-    top: 58px;
-    left: 4px;
-}
+    .xbox .x {
+        background-position: -98px 0;
+        top: 58px;
+        left: 4px;
+    }
 
-.xbox .y {
-    background-position: 48px 0;
-    left: 55px;
-    top: 7px;
-}
+    .xbox .y {
+        background-position: 48px 0;
+        left: 55px;
+        top: 7px;
+    }
 
-.xbox .sticks {
-    position: absolute;
-    width: 371px;
-    height: 196px;
-    top: 239px;
-    left: 144px;
-}
+    .xbox .sticks {
+        position: absolute;
+        width: 371px;
+        height: 196px;
+        top: 239px;
+        left: 144px;
+    }
 
-.xbox .stick {
-    position: absolute;
-    background: url(stickmod.png);
-    background-position: -85px 0;
-    height: 83px;
-    width: 83px;
-}
+    .xbox .stick {
+        position: absolute;
+        background: url(stickmod.png);
+        background-position: -85px 0;
+        height: 83px;
+        width: 83px;
+    }
 
-.xbox .stick.pressed {
-    background-position: 0 0;
-}
+    .xbox .stick.pressed {
+        background-position: 0 0;
+    }
 
-.xbox .stick.left {
-    top: 0;
-    left: 0;
-}
+    .xbox .stick.left {
+        top: 0;
+        left: 0;
+    }
 
-.xbox .stick.right {
-    top: 113px;
-    left: 288px;
-}
+    .xbox .stick.right {
+        top: 113px;
+        left: 288px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controller xbox">
+    <!-- Buttons -->
+    <div class="button a"></div>
+    <div class="button b"></div>
+    <div class="button x"></div>
+    <div class="button y"></div>
+
+    <!-- Sticks -->
+    <div class="sticks">
+      <div class="stick left"></div>
+      <div class="stick right"></div>
+    </div>
+  </div>
+
+  <script>
+    // Gamepad API logic
+    window.addEventListener("gamepadconnected", () => {
+      console.log("Gamepad connected!");
+      updateGamepad();
+    });
+
+    function updateGamepad() {
+      const gamepads = navigator.getGamepads();
+      const gp = gamepads[0];
+      if (!gp) {
+        requestAnimationFrame(updateGamepad);
+        return;
+      }
+
+      // Buttons mapping: A=0, B=1, X=2, Y=3
+      const buttons = [
+        { idx: 0, cls: ".a" },
+        { idx: 1, cls: ".b" },
+        { idx: 2, cls: ".x" },
+        { idx: 3, cls: ".y" }
+      ];
+
+      buttons.forEach(btn => {
+        const el = document.querySelector(btn.cls);
+        if (gp.buttons[btn.idx].pressed) {
+          el.classList.add("pressed");
+        } else {
+          el.classList.remove("pressed");
+        }
+      });
+
+      // Sticks mapping (press = button L3=10, R3=11)
+      const sticks = [
+        { idx: 10, cls: ".stick.left" },
+        { idx: 11, cls: ".stick.right" }
+      ];
+
+      sticks.forEach(stk => {
+        const el = document.querySelector(stk.cls);
+        if (gp.buttons[stk.idx] && gp.buttons[stk.idx].pressed) {
+          el.classList.add("pressed");
+        } else {
+          el.classList.remove("pressed");
+        }
+      });
+
+      requestAnimationFrame(updateGamepad);
+    }
+  </script>
+</body>
+</html>
